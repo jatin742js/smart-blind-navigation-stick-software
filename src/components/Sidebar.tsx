@@ -11,7 +11,9 @@ import {
   HeartHandshake,
   FileCode2,
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  LogOut,
+  LogIn
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useDevice } from '../context/DeviceContext';
@@ -27,7 +29,8 @@ export type TabId =
   | 'notifications'
   | 'caregiver-portal'
   | 'hardware-docs'
-  | 'settings';
+  | 'settings'
+  | 'login';
 
 interface SidebarProps {
   currentTab: TabId;
@@ -35,7 +38,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { activeEmergency } = useDevice();
 
   const navItems: { id: TabId; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string; alert?: boolean }[] = [
@@ -107,16 +110,55 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
           </nav>
         </div>
 
-        {/* User Identity Snapshot in footer */}
-        <div className="pt-4 border-t border-slate-200 text-xs text-slate-500">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center font-bold text-amber-700">
-              {user?.name ? user.name.charAt(0) : 'U'}
+        {/* User Identity Snapshot in footer with Logout Button */}
+        <div className="pt-4 border-t border-slate-200 text-xs text-slate-500 space-y-2">
+          <div className="flex items-center justify-between">
+            <div
+              onClick={() => onSelectTab('login')}
+              className="flex items-center gap-2.5 overflow-hidden cursor-pointer hover:opacity-80 transition"
+              title="Click to view Account / Login page"
+            >
+              <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center font-bold text-amber-700 shrink-0">
+                {user?.name ? user.name.charAt(0) : 'U'}
+              </div>
+              <div className="overflow-hidden">
+                <p className="font-semibold text-slate-800 truncate">{user?.name || 'SmartStick User'}</p>
+                <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <p className="font-semibold text-slate-800 truncate">{user?.name || 'SmartStick User'}</p>
-              <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
-            </div>
+
+            <button
+              type="button"
+              id="sidebar-logout-btn"
+              onClick={logout}
+              title="Log Out of System"
+              aria-label="Log Out of System"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition shrink-0"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] pt-1">
+            <button
+              type="button"
+              onClick={() => onSelectTab('login')}
+              className={`font-semibold hover:underline flex items-center gap-1 ${
+                currentTab === 'login' ? 'text-amber-700 font-bold' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <LogIn className="w-3 h-3" />
+              <span>Login Portal</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={logout}
+              className="text-red-600 hover:text-red-700 font-semibold hover:underline flex items-center gap-1"
+            >
+              <LogOut className="w-3 h-3" />
+              <span>Log Out</span>
+            </button>
           </div>
         </div>
       </aside>

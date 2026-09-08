@@ -63,6 +63,8 @@ const MainAppLayout: React.FC = () => {
         return <HardwareDocsPage />;
       case 'settings':
         return <SettingsPage />;
+      case 'login':
+        return <AuthPage onSuccess={() => setCurrentTab('dashboard')} onNavigateDashboard={() => setCurrentTab('dashboard')} />;
       default:
         return <DashboardPage onNavigate={setCurrentTab} />;
     }

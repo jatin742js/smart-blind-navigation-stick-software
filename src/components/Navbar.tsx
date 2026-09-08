@@ -11,7 +11,8 @@ import {
   Wifi,
   WifiOff,
   UserCheck,
-  Cpu
+  Cpu,
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useDevice } from '../context/DeviceContext';
@@ -22,7 +23,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onToggleSimulation, showSimulation }) => {
-  const { user, switchRoleDemo, highContrast, setHighContrast, voiceAnnouncements, setVoiceAnnouncements } = useAuth();
+  const { user, logout, switchRoleDemo, highContrast, setHighContrast, voiceAnnouncements, setVoiceAnnouncements } = useAuth();
   const { device, activeEmergency, triggerEmergency, countdownSeconds } = useDevice();
 
   const getBatteryIcon = (level: number = 100) => {
@@ -127,6 +128,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSimulation, showSimulati
             <span className="text-slate-700 capitalize hidden sm:inline font-semibold">
               {user?.role === 'caregiver' ? 'Caregiver Mode' : 'Ward/User Mode'}
             </span>
+          </button>
+
+          {/* Logout Button in Header */}
+          <button
+            onClick={logout}
+            id="navbar-logout-btn"
+            title="Log out of Smart Stick"
+            aria-label="Log out of Smart Stick"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-slate-700 text-xs font-semibold transition shadow-xs"
+          >
+            <LogOut className="w-3.5 h-3.5 text-slate-500 hover:text-red-600" />
+            <span className="hidden md:inline">Log Out</span>
           </button>
 
           {/* Prominent Emergency Action Trigger */}

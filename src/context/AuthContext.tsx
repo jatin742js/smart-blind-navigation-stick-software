@@ -32,6 +32,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     async function loadUser() {
       try {
+        const storedToken = getStoredToken();
+        if (!storedToken) {
+          // If no stored token, default to unauthenticated state so Login Page is shown
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+
         const profile = await api.getProfile();
         setUser(profile);
         if (profile.highContrastEnabled !== undefined) {
@@ -41,24 +49,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setVoiceAnnouncements(profile.accessibilityVoiceEnabled);
         }
       } catch (err) {
-        console.warn('Could not load stored user session, will use demo user', err);
-        // Fallback default user for immediate app usability
-        setUser({
-          id: 'usr_001',
-          name: 'Alex Johnson',
-          email: 'alex@smartstick.io',
-          phoneNumber: '+1 (555) 234-5678',
-          role: 'user',
-          emergencyMedicalInfo: 'Visually impaired (total blindness). Diabetic Type 1.',
-          bloodGroup: 'O+',
-          address: '42 Pine Crest Avenue, Dehradun, UK 248001',
-          accessibilityVoiceEnabled: true,
-          highContrastEnabled: false,
-          cancellationTimerSeconds: 20,
-          trackingIntervalSeconds: 5,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
+        console.warn('Could not load stored user session, clearing token', err);
+        removeStoredToken();
+        setToken(null);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
