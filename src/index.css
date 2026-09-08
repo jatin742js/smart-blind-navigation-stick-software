@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+.high-contrast-mode {
+  filter: contrast(135%) brightness(105%);
+}
+
+.high-contrast-mode button,
+.high-contrast-mode a,
+.high-contrast-mode input,
+.high-contrast-mode select {
+  outline: 2px solid #facc15 !important;
+  outline-offset: 2px;
+}

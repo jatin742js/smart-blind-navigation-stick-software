@@ -1,0 +1,10 @@
+{
+  "name": "Smart Blind Navigation Stick",
+  "description": "Full-stack emergency & navigation management system for visually impaired users and caregivers, featuring ESP32 smart stick telemetry, obstacle detection, GPS tracking, and real-time alerts.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
