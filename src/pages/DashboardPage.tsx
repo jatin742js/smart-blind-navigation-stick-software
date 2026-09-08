@@ -213,10 +213,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             {contacts.map(c => (
               <div
                 key={c.id}
-                className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
+                className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
               >
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                     <strong className="text-slate-900 text-sm">{c.contactName}</strong>
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
                       {c.priority}
@@ -230,7 +230,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   <p className="text-slate-500 text-[11px] mt-0.5">{c.relationship} • {c.phoneNumber}</p>
                 </div>
 
-                <span className="text-[11px] font-mono text-slate-600 px-2 py-1 bg-white rounded border border-slate-200">
+                <span className="text-[11px] font-mono text-slate-600 px-2 py-1 bg-white rounded border border-slate-200 self-start sm:self-auto">
                   {c.notificationPreference}
                 </span>
               </div>
@@ -276,15 +276,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   <div
                     key={ev.id}
                     onClick={() => onNavigate('emergency-history')}
-                    className="cursor-pointer p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition flex items-center justify-between text-xs"
+                    className="cursor-pointer p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isAlert ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isAlert ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}`}>
                         <ShieldAlert className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <strong className="text-slate-800">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <strong className="text-slate-800 truncate">
                             {ev.eventTrigger === 'SIMULATED' ? 'Simulated Emergency' : 'Push Button Emergency'}
                           </strong>
                           <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
@@ -293,13 +293,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                             {ev.status}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5 truncate max-w-xs">
+                        <p className="text-[11px] text-slate-500 mt-0.5 truncate">
                           {ev.locationAddress || 'Central Clock Tower, Dehradun'}
                         </p>
                       </div>
                     </div>
 
-                    <span className="text-[11px] font-mono text-slate-500 whitespace-nowrap">
+                    <span className="text-[11px] font-mono text-slate-500 whitespace-nowrap self-end sm:self-auto">
                       {new Date(ev.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>

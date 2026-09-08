@@ -23,6 +23,7 @@ const MainAppLayout: React.FC = () => {
   const { user, isLoading } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabId>('dashboard');
   const [showSimulation, setShowSimulation] = useState<boolean>(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   if (isLoading) {
     return (
@@ -77,16 +78,24 @@ const MainAppLayout: React.FC = () => {
       <Navbar
         onToggleSimulation={() => setShowSimulation(!showSimulation)}
         showSimulation={showSimulation}
+        mobileMenuOpen={mobileMenuOpen}
+        onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
       />
 
       {/* Main Workspace with Sidebar */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto pb-16 lg:pb-0">
+      <div className="flex-1 flex max-w-7xl w-full mx-auto">
         
-        {/* Sidebar */}
-        <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} />
+        {/* Sidebar (Desktop + Mobile Slide-over Drawer + Bottom bar) */}
+        <Sidebar
+          currentTab={currentTab}
+          onSelectTab={setCurrentTab}
+          mobileMenuOpen={mobileMenuOpen}
+          onCloseMobileMenu={() => setMobileMenuOpen(false)}
+          onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
+        />
 
         {/* Dynamic Content Region */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">
+        <main className="flex-1 p-3 sm:p-5 lg:p-8 max-w-full overflow-x-hidden pb-24 lg:pb-8">
           
           {/* Hardware Demo Simulation Controls */}
           {showSimulation && (

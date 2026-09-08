@@ -49,7 +49,17 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     mapInstanceRef.current = map;
 
+    // ResizeObserver to ensure Leaflet recalculates dimensions when container resizes or device rotates
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        map.invalidateSize();
+      });
+      resizeObserver.observe(mapContainerRef.current);
+    }
+
     return () => {
+      if (resizeObserver) resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
     };
@@ -198,34 +208,34 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       <div ref={mapContainerRef} className={`w-full ${heightClass} z-0`} />
 
       {/* Bottom Telemetry Overlay */}
-      <div className="absolute bottom-3 left-3 right-3 z-[1000] pointer-events-none">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur border border-slate-200 p-3 rounded-xl shadow-lg flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 z-[1000] pointer-events-none">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur border border-slate-200 p-2 sm:p-3 rounded-xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-              <MapPin className="w-4 h-4" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
+              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div>
+            <div className="min-w-0">
               {hasCoordinates ? (
                 <>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-slate-800 text-[11px] sm:text-xs truncate">
                     Lat: {currentLocation.latitude.toFixed(5)}, Lng: {currentLocation.longitude.toFixed(5)}
                   </p>
-                  <p className="text-[11px] text-slate-500">
-                    Accuracy: ±{currentLocation.accuracyMeters ?? 4.5}m • Speed: {currentLocation.speedKmh ?? 0} km/h
+                  <p className="text-[10px] sm:text-[11px] text-slate-500">
+                    ±{currentLocation.accuracyMeters ?? 4.5}m • {currentLocation.speedKmh ?? 0} km/h
                   </p>
                 </>
               ) : (
-                <div className="flex items-center gap-1.5 text-amber-800 font-semibold">
-                  <AlertTriangle className="w-4 h-4 text-amber-600" />
-                  <span>GPS location unavailable. Showing last known location.</span>
+                <div className="flex items-center gap-1 text-amber-800 font-semibold text-[11px]">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span className="truncate">GPS location unavailable</span>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="text-right text-[11px] text-slate-500 font-mono">
-            <span>Last Sync: </span>
+          <div className="text-left sm:text-right text-[10px] sm:text-[11px] text-slate-500 font-mono">
+            <span>Sync: </span>
             <strong className="text-slate-800">
               {currentLocation ? new Date(currentLocation.recordedAt).toLocaleTimeString() : 'Waiting for GPS...'}
             </strong>

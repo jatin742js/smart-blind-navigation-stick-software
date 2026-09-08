@@ -226,8 +226,8 @@ export const EmergencyContactsPage: React.FC = () => {
 
       {/* Add / Edit Contact Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
-          <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xl text-slate-800 my-auto">
             
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-slate-900">

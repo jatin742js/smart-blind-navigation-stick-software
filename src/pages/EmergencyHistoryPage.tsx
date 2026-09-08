@@ -101,98 +101,162 @@ export const EmergencyHistoryPage: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-600">
-              <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-bold text-[11px] border-b border-slate-200">
-                <tr>
-                  <th className="px-5 py-3.5">Trigger / Event</th>
-                  <th className="px-5 py-3.5">Date & Time</th>
-                  <th className="px-5 py-3.5">Location</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5">Contacts Notified</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {events.map(ev => {
-                  const hasGps = ev.latitude !== null && ev.longitude !== null;
-                  return (
-                    <tr
-                      key={ev.id}
-                      onClick={() => openEventDetails(ev)}
-                      className="hover:bg-slate-50 cursor-pointer transition"
+        <div className="space-y-3">
+          {/* Mobile Card View (sm:hidden) */}
+          <div className="sm:hidden space-y-3">
+            {events.map(ev => {
+              const hasGps = ev.latitude !== null && ev.longitude !== null;
+              const isAlert = ev.status === 'ACTIVE' || ev.status === 'PENDING_CONFIRMATION';
+              return (
+                <div
+                  key={ev.id}
+                  onClick={() => openEventDetails(ev)}
+                  className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3 active:scale-[0.99] transition cursor-pointer"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                        isAlert ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <ShieldAlert className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">
+                          {ev.eventTrigger === 'PHYSICAL_BUTTON' ? 'Physical Stick Button' : ev.eventTrigger === 'SIMULATED' ? 'Simulated Emergency' : 'Manual App SOS'}
+                        </h4>
+                        <span className="text-[10px] font-mono text-slate-400">ID: {ev.id.slice(0, 12)}...</span>
+                      </div>
+                    </div>
+                    {getStatusBadge(ev.status)}
+                  </div>
+
+                  <div className="space-y-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                      <span className="truncate text-slate-800">{ev.locationAddress || 'Current GPS coordinates'}</span>
+                    </div>
+                    {hasGps && (
+                      <span className="text-[10px] font-mono text-slate-400 block pl-5">
+                        {ev.latitude?.toFixed(4)}, {ev.longitude?.toFixed(4)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+                    <span className="font-mono">
+                      {new Date(ev.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEventDetails(ev);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 font-semibold text-xs border border-amber-200 inline-flex items-center gap-1"
                     >
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                            ev.status === 'ACTIVE' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-slate-100 text-slate-600'
-                          }`}>
-                            <ShieldAlert className="w-4 h-4" />
+                      <Eye className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Inspect</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop & Tablet Table (hidden sm:block) */}
+          <div className="hidden sm:block rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-600">
+                <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-bold text-[11px] border-b border-slate-200">
+                  <tr>
+                    <th className="px-5 py-3.5">Trigger / Event</th>
+                    <th className="px-5 py-3.5">Date & Time</th>
+                    <th className="px-5 py-3.5">Location</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5">Contacts Notified</th>
+                    <th className="px-5 py-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {events.map(ev => {
+                    const hasGps = ev.latitude !== null && ev.longitude !== null;
+                    return (
+                      <tr
+                        key={ev.id}
+                        onClick={() => openEventDetails(ev)}
+                        className="hover:bg-slate-50 cursor-pointer transition"
+                      >
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                              ev.status === 'ACTIVE' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-slate-100 text-slate-600'
+                            }`}>
+                              <ShieldAlert className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <span className="font-bold text-slate-900 block">
+                                {ev.eventTrigger === 'PHYSICAL_BUTTON' ? 'Physical Stick Button' : ev.eventTrigger === 'SIMULATED' ? 'Simulated Emergency' : 'Manual App SOS'}
+                              </span>
+                              <span className="text-[10px] font-mono text-slate-400">ID: {ev.id}</span>
+                            </div>
                           </div>
-                          <div>
-                            <span className="font-bold text-slate-900 block">
-                              {ev.eventTrigger === 'PHYSICAL_BUTTON' ? 'Physical Stick Button' : ev.eventTrigger === 'SIMULATED' ? 'Simulated Emergency' : 'Manual App SOS'}
+                        </td>
+
+                        <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-700">
+                          {new Date(ev.createdAt).toLocaleString([], {
+                            dateStyle: 'short',
+                            timeStyle: 'short',
+                          })}
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                            <span className="truncate max-w-xs text-slate-800">{ev.locationAddress || 'Current GPS coordinates'}</span>
+                          </div>
+                          {hasGps && (
+                            <span className="text-[10px] font-mono text-slate-400 block mt-0.5">
+                              {ev.latitude?.toFixed(4)}, {ev.longitude?.toFixed(4)}
                             </span>
-                            <span className="text-[10px] font-mono text-slate-400">ID: {ev.id}</span>
-                          </div>
-                        </div>
-                      </td>
+                          )}
+                        </td>
 
-                      <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-700">
-                        {new Date(ev.createdAt).toLocaleString([], {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })}
-                      </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          {getStatusBadge(ev.status)}
+                        </td>
 
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                          <span className="truncate max-w-xs text-slate-800">{ev.locationAddress || 'Current GPS coordinates'}</span>
-                        </div>
-                        {hasGps && (
-                          <span className="text-[10px] font-mono text-slate-400 block mt-0.5">
-                            {ev.latitude?.toFixed(4)}, {ev.longitude?.toFixed(4)}
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="px-2 py-0.5 rounded text-slate-700 bg-slate-100 font-mono text-xs border border-slate-200">
+                            {ev.contactsNotifiedCount ?? 3} Contacts
                           </span>
-                        )}
-                      </td>
+                        </td>
 
-                      <td className="px-5 py-4 whitespace-nowrap">
-                        {getStatusBadge(ev.status)}
-                      </td>
-
-                      <td className="px-5 py-4 whitespace-nowrap">
-                        <span className="px-2 py-0.5 rounded text-slate-700 bg-slate-100 font-mono text-xs border border-slate-200">
-                          {ev.contactsNotifiedCount ?? 3} Contacts
-                        </span>
-                      </td>
-
-                      <td className="px-5 py-4 text-right whitespace-nowrap">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEventDetails(ev);
-                          }}
-                          className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 transition"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-amber-600" />
-                          <span>Inspect</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        <td className="px-5 py-4 text-right whitespace-nowrap">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEventDetails(ev);
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 transition"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Inspect</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {/* Detailed Inspection Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
-          <div className="w-full max-w-2xl rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn overflow-y-auto">
+          <div className="w-full max-w-2xl rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xl text-slate-800 max-h-[92vh] overflow-y-auto my-auto">
             
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
